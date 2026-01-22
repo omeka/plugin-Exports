@@ -3,5 +3,47 @@ echo head([
     'title' => __('Exports') . ' ' . __('(%s total)', $total_results),
     'bodyclass' => 'exports browse',
 ]);
+$sortLinks = [
+    __('Label') => 'label',
+    __('Exporter') => 'exporter_name',
+    __('Status') => null,
+    __('Owner') => null,
+    __('Created') => 'created',
+];
 ?>
+<?php echo pagination_links(['attributes' => ['aria-label' => __('Top pagination')]]); ?>
+
+<a href="<?php echo html_escape(url('exports/exports/add')); ?>" class="create-export full-width-mobile button green"><?php echo __('Create an Export'); ?></a>
+
+<?php if ($total_results): ?>
+
+<div class="table-responsive">
+    <table id="exports">
+        <thead>
+            <tr>
+                <?php echo browse_sort_links($sortLinks, ['link_tag' => 'th scope="col"', 'list_tag' => '']); ?>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach (loop('ExportsExport') as $export): ?>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>
+
+<?php else: ?>
+
+<h2><?php echo __('No exports found.'); ?></h2>
+
+<?php endif; ?>
+
+<?php echo pagination_links(['attributes' => ['aria-label' => __('Bottom pagination')]]); ?>
+
 <?php echo foot(); ?>
