@@ -11,6 +11,7 @@ class ExportsPlugin extends Omeka_Plugin_AbstractPlugin
 
     protected $_filters = array(
         'admin_navigation_main',
+        'exports_exporters',
     );
 
     public function hookInstall()
@@ -56,9 +57,15 @@ class ExportsPlugin extends Omeka_Plugin_AbstractPlugin
     {
         $nav[] = [
             'label' => __('Exports'),
-            'uri' => url('exports/exports'),
+            'uri' => url('exports'),
             'resource' => ('Exports_Exports'),
         ];
         return $nav;
+    }
+
+    public function filterExportsExporters($exporters)
+    {
+        $exporters['resources'] = new Exports_Exporter_Resources;
+        return $exporters;
     }
 }

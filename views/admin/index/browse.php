@@ -13,7 +13,7 @@ $sortLinks = [
 ?>
 <?php echo pagination_links(['attributes' => ['aria-label' => __('Top pagination')]]); ?>
 
-<a href="<?php echo html_escape(url('exports/exports/add')); ?>" class="create-export full-width-mobile button green"><?php echo __('Create an Export'); ?></a>
+<a href="<?php echo html_escape(url(['action' => 'set-exporter'])); ?>" class="set-exporter full-width-mobile button green"><?php echo __('Create an Export'); ?></a>
 
 <?php if ($total_results): ?>
 
