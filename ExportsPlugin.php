@@ -18,7 +18,7 @@ class ExportsPlugin extends Omeka_Plugin_AbstractPlugin
     {
         $db = get_db();
         $sql = "
-        CREATE TABLE `$db->Exports` (
+        CREATE TABLE `$db->ExportsExport` (
             `id` INT UNSIGNED AUTO_INCREMENT NOT NULL,
             `owner_id` INT UNSIGNED DEFAULT NULL,
             `process_id` INT DEFAULT NULL,
@@ -36,7 +36,7 @@ class ExportsPlugin extends Omeka_Plugin_AbstractPlugin
     public function hookUninstall()
     {
         $db = get_db();
-        $db->query("DROP TABLE IF EXISTS `$db->Exports`");
+        $db->query("DROP TABLE IF EXISTS `$db->ExportsExport`");
     }
 
     public function hookConfigForm($args)
@@ -65,7 +65,7 @@ class ExportsPlugin extends Omeka_Plugin_AbstractPlugin
 
     public function filterExportsExporters($exporters)
     {
-        $exporters['resources'] = new Exports_Exporter_Resources;
+        $exporters['items'] = new Exports_Exporter_Items;
         return $exporters;
     }
 }

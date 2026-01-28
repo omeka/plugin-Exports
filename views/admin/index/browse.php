@@ -26,12 +26,18 @@ $sortLinks = [
         </thead>
         <tbody>
             <?php foreach (loop('ExportsExport') as $export): ?>
+            <?php $exporter = $exporterManager->get($export->exporter_name); ?>
             <tr>
+                <td><?php echo $export->label; ?></td>
+                <td><?php echo $exporter->getLabel(); ?></td>
                 <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td><?php
+                    $owner = $export->getOwner();
+                    echo $owner
+                        ? sprintf('%s', link_to($owner, 'edit', $owner->username, ['class'=>'edit']))
+                        : sprintf('[%s]', __('unknown')); ?>
+                </td>
+                <td><?php echo format_date($export->created); ?></td>
             </tr>
             <?php endforeach; ?>
         </tbody>

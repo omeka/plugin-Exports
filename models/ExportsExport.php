@@ -20,4 +20,24 @@ class ExportsExport extends Omeka_Record_AbstractRecord implements Zend_Acl_Reso
     {
         return 'Exports_Exports';
     }
+
+    protected function beforeSave($args)
+    {
+        $post = $args['post'];
+
+        // The export name is a union of the exporter name, the timestamp when
+        // the job was started (to ensure uniqueness and consistent file sorting),
+        // and a random string (to further ensure uniqueness).
+        $this->name = sprintf(
+            '%s_%s_%s',
+            $post['exporter_name'],
+            time(),
+            substr(md5(rand()), 0, 4)
+        );
+    }
+
+    protected function afterSave($args)
+    {
+        // @todo: Dispatch export process
+    }
 }
