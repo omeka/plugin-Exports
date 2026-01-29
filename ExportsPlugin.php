@@ -41,10 +41,21 @@ class ExportsPlugin extends Omeka_Plugin_AbstractPlugin
 
     public function hookConfigForm($args)
     {
+        $exportsDirectoryPath = get_option('exports_directory_path');
+        echo get_view()->partial(
+            'exports-config-form.php',
+            [
+                'exports_directory_path' => $exportsDirectoryPath,
+            ]
+        );
     }
 
     public function hookConfig($args)
     {
+        if (!self::exportsDirectoryPathIsValid($_POST['exports_directory_path'])) {
+            throw new Omeka_Plugin_Installer_Exception('Invalid exports directory path');
+        }
+        set_option('exports_directory_path', $_POST['exports_directory_path']);
     }
 
     public function hookDefineAcl($args)
@@ -67,5 +78,10 @@ class ExportsPlugin extends Omeka_Plugin_AbstractPlugin
     {
         $exporters['items'] = new Exports_Exporter_Items;
         return $exporters;
+    }
+
+    public static function exportsDirectoryPathIsValid($exportsDirectoryPath)
+    {
+        return (is_dir($exportsDirectoryPath) && is_writable($exportsDirectoryPath));
     }
 }
