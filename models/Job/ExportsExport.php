@@ -12,12 +12,28 @@ class Job_ExportsExport extends Omeka_Job_AbstractJob
     {
         try {
             $this->setStatus(Process::STATUS_IN_PROGRESS);
+
+            // Make the export directory.
             $this->makeDirectory('');
-            // @todo: Delegate the export to the exporter.
-            // @todo: Create the export ZIP file.
-            // @todo: Delete leftover server artifacts.
+
+            // Delegate the export to the exporter.
+            $this->getExport()->getExporter()->export($this);
+
+            // Create the export ZIP file.
+            $command = sprintf(
+                'cd %s && zip --recurse-paths ../%s .',
+                sprintf('%s/%s', $this->getExportsDirectoryPath(), $this->getExportName()),
+                sprintf('%s.zip', $this->getExportName()),
+                $this->getExportName()
+            );
+            $this->execute($command);
+
+            // Delete leftover server artifacts.
+            $this->deleteExportDirectory();
+
             $this->setStatus(Process::STATUS_COMPLETED);
-        } catch (Exception $e) {
+
+            } catch (Exception $e) {
             $this->setStatus(Process::STATUS_ERROR);
             _log($e->getMessage(), Zend_Log::ERR);
         }
@@ -40,6 +56,21 @@ class Job_ExportsExport extends Omeka_Job_AbstractJob
             sprintf('%s/%s', $this->getExportDirectoryPath(), $filePath),
             $content
         );
+    }
+
+    /**
+     * Delete the export directory from the server.
+     */
+    public function deleteExportDirectory(): void
+    {
+        $path = $this->getExportDirectoryPath();
+        if (is_dir($path) && is_writable($path)) {
+            $command = sprintf(
+                'rm -r %s',
+                escapeshellarg($path)
+            );
+            $this->execute($command);
+        }
     }
 
     /**
@@ -105,5 +136,17 @@ class Job_ExportsExport extends Omeka_Job_AbstractJob
     {
         $this->getExport()->setStatus($status);
         $this->getExport()->save();
+    }
+
+    /**
+     * Execute a command.
+     */
+    public function execute($command)
+    {
+        $output = shell_exec($command);
+        if (false === $output) {
+            // Stop the job.
+            throw new Exception(sprintf('Invalid command: %s', $command));
+        }
     }
 }

@@ -10,10 +10,6 @@ class ExportsExport extends Omeka_Record_AbstractRecord implements Zend_Acl_Reso
     public $added;
     public $modified;
 
-    protected $_related = [
-        'Data' => 'getData',
-    ];
-
     protected function _initializeMixins()
     {
         $this->_mixins[] = new Mixin_Owner($this);
@@ -23,6 +19,12 @@ class ExportsExport extends Omeka_Record_AbstractRecord implements Zend_Acl_Reso
     public function getResourceId()
     {
         return 'Exports_Exports';
+    }
+
+    public function getExporter()
+    {
+        $exporterManager = Zend_Registry::get('exports_exporter_manager');
+        return $exporterManager->get($this->exporter_name);
     }
 
     public function getData()

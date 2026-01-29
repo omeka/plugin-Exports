@@ -15,18 +15,14 @@ class Exports_IndexController extends Omeka_Controller_AbstractActionController
 
     public function browseAction()
     {
-        $exporterManager = new Exports_Exporter_Manager;
-
-        $this->view->assign([
-            'exporterManager' => $exporterManager,
-        ]);
+        $this->view->assign([]);
 
         return parent::browseAction();
     }
 
     public function setExporterAction()
     {
-        $exporterManager = new Exports_Exporter_Manager;
+        $exporterManager = Zend_Registry::get('exports_exporter_manager');
 
         if ($this->getRequest()->isPost()) {
             $this->_helper->flashMessenger(__('Configure your export below.'), 'success');
@@ -40,7 +36,7 @@ class Exports_IndexController extends Omeka_Controller_AbstractActionController
 
     public function exportAction()
     {
-        $exporterManager = new Exports_Exporter_Manager;
+        $exporterManager = Zend_Registry::get('exports_exporter_manager');
         $exporter = $exporterManager->get($this->_getParam('exporter'));
         $form = new Exports_Form_Export($exporter);
         $csrf = new Omeka_Form_SessionCsrf;

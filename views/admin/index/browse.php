@@ -26,7 +26,7 @@ $sortLinks = [
         </thead>
         <tbody>
             <?php foreach (loop('ExportsExport') as $export): ?>
-            <?php $exporter = $exporterManager->get($export->exporter_name); ?>
+            <?php $exporter = $export->getExporter(); ?>
             <tr>
                 <td><?php echo $export->label; ?></td>
                 <td><?php echo $exporter->getLabel(); ?></td>

@@ -2,6 +2,7 @@
 class ExportsPlugin extends Omeka_Plugin_AbstractPlugin
 {
     protected $_hooks = array(
+        'initialize',
         'install',
         'uninstall',
         'config_form',
@@ -13,6 +14,12 @@ class ExportsPlugin extends Omeka_Plugin_AbstractPlugin
         'admin_navigation_main',
         'exports_exporters',
     );
+
+    public function hookInitialize()
+    {
+        $exporterManager = new Exports_Exporter_Manager;
+        Zend_Registry::set('exports_exporter_manager', $exporterManager);
+    }
 
     public function hookInstall()
     {
