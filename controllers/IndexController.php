@@ -36,12 +36,12 @@ class Exports_IndexController extends Omeka_Controller_AbstractActionController
     public function exportAction()
     {
         $exporterManager = new Exports_Exporter_Manager;
-        $exporterName = $this->_getParam('exporter');
-        $exporter = $exporterManager->get($exporterName);
+        $exporter = $exporterManager->get($this->_getParam('exporter'));
+        $form = new Exports_Form_Export($exporter);
 
         $this->view->assign([
             'exporter' => $exporter,
-            'exporterName' => $exporterName,
+            'form' => $form,
         ]);
 
         return parent::addAction();

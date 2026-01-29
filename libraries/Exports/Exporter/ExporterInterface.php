@@ -2,6 +2,11 @@
 interface Exports_Exporter_ExporterInterface
 {
     /**
+     * Get the exporter registered name.
+     */
+    public function getName();
+
+    /**
      * Get the exporter label.
      */
     public function getLabel();
@@ -12,7 +17,7 @@ interface Exports_Exporter_ExporterInterface
     public function getDescription();
 
     /**
-     * Get the form HTML needed to configure the export.
+     * Add the form elements to configure the export.
      */
-    public function getForm($view);
+    public function addElements($form, $exporter);
 }

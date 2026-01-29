@@ -1,6 +1,11 @@
 <?php
 class Exports_Exporter_Items implements Exports_Exporter_ExporterInterface
 {
+    public function getName()
+    {
+        return 'items';
+    }
+
     public function getLabel()
     {
         return __('Items');
@@ -11,22 +16,10 @@ class Exports_Exporter_Items implements Exports_Exporter_ExporterInterface
         return __('Export a file containing data about selected items.');
     }
 
-    public function getForm($view)
+    public function addElements($form, $exporter)
     {
-        $form = <<<'FORM'
-        <div class="field">
-            <div class="two columns alpha">
-                <label for="label">%s</label>
-            </div>
-            <div class="inputs five columns omega">
-                %s
-            </div>
-        </div>
-        FORM;
-        return sprintf(
-            $form,
-            __('Search Query'),
-            $view->formText('data[query]', '', [])
-        );
+        $form->addElement('text', 'query', [
+            'label' => __('Search Query'),
+        ]);
     }
 }
