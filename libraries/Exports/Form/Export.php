@@ -31,6 +31,6 @@ class Exports_Form_Export extends Omeka_Form
         $this->addSubform($dataForm, 'data');
 
         // Add exporter-specific elements.
-        $exporter->addElements($dataForm, $exporter);
+        $exporter->addElements($dataForm);
     }
 }

@@ -19,5 +19,5 @@ interface Exports_Exporter_ExporterInterface
     /**
      * Add the form elements to configure the export.
      */
-    public function addElements($form, $exporter);
+    public function addElements($form);
 }

@@ -21,10 +21,10 @@ class ExportsPlugin extends Omeka_Plugin_AbstractPlugin
         CREATE TABLE `$db->ExportsExport` (
             `id` INT UNSIGNED AUTO_INCREMENT NOT NULL,
             `owner_id` INT UNSIGNED DEFAULT NULL,
-            `process_id` INT DEFAULT NULL,
             `exporter_name` VARCHAR(255) NOT NULL,
             `name` VARCHAR(255) DEFAULT NULL,
             `label` VARCHAR(255) NOT NULL,
+            `status` VARCHAR(255) DEFAULT NULL,
             `data` LONGTEXT NOT NULL,
             `added` DATETIME NOT NULL,
             `modified` DATETIME DEFAULT NULL,

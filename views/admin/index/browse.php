@@ -30,7 +30,7 @@ $sortLinks = [
             <tr>
                 <td><?php echo $export->label; ?></td>
                 <td><?php echo $exporter->getLabel(); ?></td>
-                <td></td>
+                <td><?php echo $export->status; ?></td>
                 <td><?php
                     $owner = $export->getOwner();
                     echo $owner

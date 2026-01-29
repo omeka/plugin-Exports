@@ -16,7 +16,7 @@ class Exports_Exporter_Items implements Exports_Exporter_ExporterInterface
         return __('Export a file containing data about selected items.');
     }
 
-    public function addElements($form, $exporter)
+    public function addElements($form)
     {
         $form->addElement('text', 'query', [
             'label' => __('Search Query'),
