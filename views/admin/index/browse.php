@@ -1,6 +1,6 @@
 <?php
 echo head([
-    'title' => __('Exports') . ' ' . __('(%s total)', $total_results),
+    'title' => __('Browse Exports') . ' ' . __('(%s total)', $total_results),
     'bodyclass' => 'exports browse',
 ]);
 $sortLinks = [
@@ -10,6 +10,7 @@ $sortLinks = [
     __('Owner') => null,
     __('Created') => 'created',
 ];
+echo flash();
 ?>
 <?php echo pagination_links(['attributes' => ['aria-label' => __('Top pagination')]]); ?>
 
@@ -26,18 +27,16 @@ $sortLinks = [
         </thead>
         <tbody>
             <?php foreach (loop('ExportsExport') as $export): ?>
-            <?php $exporter = $export->getExporter(); ?>
+            <?php
+            $exporter = $export->getExporter();
+            $owner = $export->getOwner()
+            ?>
             <tr>
-                <td><?php echo $export->label; ?></td>
+                <td><span class="title"><?php echo link_to($export, 'show', $export->getLabel()); ?></span></td>
                 <td><?php echo $exporter->getLabel(); ?></td>
-                <td><?php echo $export->status; ?></td>
-                <td><?php
-                    $owner = $export->getOwner();
-                    echo $owner
-                        ? sprintf('%s', link_to($owner, 'edit', $owner->username, ['class'=>'edit']))
-                        : sprintf('[%s]', __('unknown')); ?>
-                </td>
-                <td><?php echo format_date($export->created); ?></td>
+                <td><?php echo $export->getSataus(); ?></td>
+                <td><?php echo $owner ? sprintf('%s (%s)', $owner->name, $owner->username) : ''; ?></td>
+                <td><?php echo format_date($export->created, Zend_Date::DATETIME_MEDIUM); ?></td>
             </tr>
             <?php endforeach; ?>
         </tbody>

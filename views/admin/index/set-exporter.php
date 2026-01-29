@@ -1,5 +1,5 @@
 <?php
-echo head(['title' => __('Create export'), 'bodyclass' => 'exports set-export']);
+echo head(['title' => __('Create Export'), 'bodyclass' => 'exports set-export']);
 ?>
 
 <form method="post">

@@ -13,13 +13,6 @@ class Exports_IndexController extends Omeka_Controller_AbstractActionController
         return array('added', 'd');
     }
 
-    public function browseAction()
-    {
-        $this->view->assign([]);
-
-        return parent::browseAction();
-    }
-
     public function setExporterAction()
     {
         $exporterManager = Zend_Registry::get('exports_exporter_manager');
@@ -56,15 +49,10 @@ class Exports_IndexController extends Omeka_Controller_AbstractActionController
 
             // Populate the export record.
             $export = new ExportsExport;
-            $export->exporter_name = $_POST['exporter_name'];
-            $export->label = $_POST['label'];
-            $export->name = sprintf(
-                '%s_%s_%s',
-                $_POST['exporter_name'],
-                time(),
-                substr(md5(rand()), 0, 4)
-            );
-            $export->data = json_encode($_POST['data']);
+            $export->setExporterName($_POST['exporter_name']);
+            $export->setName($_POST['exporter_name']);
+            $export->setLabel($_POST['label']);
+            $export->setData($_POST['data']);
 
             if ($export->save(false)) {
 
@@ -75,8 +63,8 @@ class Exports_IndexController extends Omeka_Controller_AbstractActionController
                     ['export_id' => $export->id]
                 );
 
-                $this->_helper->flashMessenger(__('Exporting "%s".', $export->label), 'success');
-                $this->_helper->redirector('browse');
+                $this->_helper->flashMessenger(__('Exporting "%s".', $export->getLabel()), 'success');
+                $this->_helper->redirector->goToRoute(['action' => 'show', 'id' => $export->getId()]);
 
             } else {
                 $export->delete();

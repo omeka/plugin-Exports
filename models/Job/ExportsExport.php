@@ -126,7 +126,7 @@ class Job_ExportsExport extends Omeka_Job_AbstractJob
      */
     public function getExportName()
     {
-        return $this->_options['export_name'] ?? $this->getExport()->name;
+        return $this->_options['export_name'] ?? $this->getExport()->getName();
     }
 
     /**

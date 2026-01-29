@@ -1,6 +1,6 @@
 <?php
 echo head([
-    'title' => __('Create export'),
+    'title' => __('Create Export'),
     'bodyclass' => 'exports export',
 ]);
 echo flash();

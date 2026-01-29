@@ -21,10 +21,70 @@ class ExportsExport extends Omeka_Record_AbstractRecord implements Zend_Acl_Reso
         return 'Exports_Exports';
     }
 
+    public function getRecordUrl($action = 'show')
+    {
+        return [
+            'module' => 'exports',
+            'controller' => 'index',
+            'action' => $action,
+            'id' => $this->id,
+        ];
+    }
+
+    public function getId()
+    {
+        return $this->id;
+    }
+
     public function getExporter()
     {
         $exporterManager = Zend_Registry::get('exports_exporter_manager');
-        return $exporterManager->get($this->exporter_name);
+        return $exporterManager->get($this->getExporterName());
+    }
+
+    public function setExporterName($exporterName)
+    {
+        $this->exporter_name = $exporterName;
+    }
+
+    public function getExporterName()
+    {
+        return $this->exporter_name;
+    }
+
+    public function setName($exporterName)
+    {
+        $this->name = sprintf(
+            '%s_%s_%s',
+            $exporterName,
+            time(),
+            substr(md5(rand()), 0, 4)
+        );
+    }
+
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    public function setLabel($label)
+    {
+        $this->label = $label;
+    }
+
+    public function getLabel()
+    {
+        return $this->label;
+    }
+
+    public function setStatus($status)
+    {
+        $this->status = $status;
+    }
+
+    public function getSataus()
+    {
+        return $this->status;
     }
 
     public function getData()
@@ -32,8 +92,8 @@ class ExportsExport extends Omeka_Record_AbstractRecord implements Zend_Acl_Reso
         return json_decode($this->data, true);
     }
 
-    public function setStatus($status)
+    public function setData($data)
     {
-        $this->status = $status;
+        $this->data = json_encode($data);
     }
 }
