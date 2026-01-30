@@ -18,7 +18,7 @@ class Exports_Exporter_Manager
     public function get($exporterName)
     {
         if (!isset($this->exporters[$exporterName])) {
-            return new Exports_Exporter_Fallback;
+            return new Exports_Exporter_Unknown($exporterName);
         }
         return $this->exporters[$exporterName];
     }

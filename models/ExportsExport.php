@@ -82,7 +82,7 @@ class ExportsExport extends Omeka_Record_AbstractRecord implements Zend_Acl_Reso
         $this->status = $status;
     }
 
-    public function getSataus()
+    public function getStatus()
     {
         return $this->status;
     }

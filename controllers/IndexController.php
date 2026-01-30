@@ -34,6 +34,13 @@ class Exports_IndexController extends Omeka_Controller_AbstractActionController
         $form = new Exports_Form_Export($exporter);
         $csrf = new Omeka_Form_SessionCsrf;
 
+        // Re-export if the "id" parameter is present.
+        $id = $this->_getParam('id');
+        if ($id) {
+            $export = $this->_helper->db->findById();
+            $form->getSubForm('data')->setDefaults($export->getData());
+        }
+
         $this->view->assign([
             'exporter' => $exporter,
             'form' => $form,
