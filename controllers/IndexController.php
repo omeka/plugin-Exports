@@ -13,6 +13,16 @@ class Exports_IndexController extends Omeka_Controller_AbstractActionController
         return array('added', 'd');
     }
 
+    protected function _getDeleteConfirmMessage($export)
+    {
+        return __(sprintf('This will delete the export "%s".', $export->getLabel()));
+    }
+
+    protected function _getDeleteSuccessMessage($export)
+    {
+        return __(sprintf('The export "%s" was successfully deleted.', $export->getLabel()));
+    }
+
     public function setExporterAction()
     {
         $exporterManager = Zend_Registry::get('exports_exporter_manager');

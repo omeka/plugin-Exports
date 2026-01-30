@@ -96,4 +96,17 @@ class ExportsExport extends Omeka_Record_AbstractRecord implements Zend_Acl_Reso
     {
         $this->data = json_encode($data);
     }
+
+    protected function afterDelete()
+    {
+        if (!in_array($this->getStatus(), [Process::STATUS_COMPLETED, Process::STATUS_ERROR])) {
+            return;
+        }
+        // Dispatch the export delete job.
+        $dispatcher = Zend_Registry::get('job_dispatcher');
+        $dispatcher->sendLongRunning(
+            'Job_ExportsDelete',
+            ['export_name' => $this->getName()]
+        );
+    }
 }

@@ -34,7 +34,7 @@ echo flash();
             <tr>
                 <td><span class="title"><?php echo link_to($export, 'show', $export->getLabel()); ?></span></td>
                 <td><?php echo $exporter->getLabel(); ?></td>
-                <td><?php echo $export->getStatus(); ?></td>
+                <td><?php echo $export->getStatus() ? __($export->getStatus()) : __('unknown'); ?></td>
                 <td><?php echo $owner ? sprintf('%s (%s)', $owner->name, $owner->username) : ''; ?></td>
                 <td><?php echo format_date($export->created, Zend_Date::DATETIME_MEDIUM); ?></td>
             </tr>
