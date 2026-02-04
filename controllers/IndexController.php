@@ -59,7 +59,8 @@ class Exports_IndexController extends Omeka_Controller_AbstractActionController
 
         if ($this->getRequest()->isPost()) {
 
-            if (!$csrf->isValid($_POST)) {
+            if (!($form->isValid($_POST) && $csrf->isValid($_POST))) {
+                $form->getElement('exporter')->setValue($exporter->getLabel());
                 $this->_helper->flashMessenger(__('There were errors found in your form. Please edit and resubmit.'), 'error');
                 return;
             }

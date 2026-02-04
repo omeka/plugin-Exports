@@ -20,6 +20,7 @@ class Exports_Form_Export extends Omeka_Form
         $this->addElement('text', 'label', [
             'label' => __('Label'),
             'value' => sprintf('%s - %s', $exporter->getLabel(), date('Y-m-d\TH:i:s')),
+            'required' => true,
         ]);
 
         // Add the data sub-form. Here we must set decorators to remove the

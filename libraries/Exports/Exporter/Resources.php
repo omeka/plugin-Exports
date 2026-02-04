@@ -32,9 +32,21 @@ class Exports_Exporter_Resources implements Exports_Exporter_ExporterInterface
             'label' => __('Resource Type'),
             'description' => __('Select the type of resource to export.'),
             'multiOptions' => $resourceTypes,
+            'required' => true,
         ]);
         $form->addElement('text', 'query', [
             'label' => __('Search Query'),
+            'description' => __('Enter the query used to filter the resources to be exported. If no query is entered, all available resources will be exported.'),
+        ]);
+        $form->addElement('select', 'format', [
+            'label' => __('Format'),
+            'description' => __('Select the format of the export file.'),
+            'multiOptions' => [
+                '' => __('Select Below'),
+                'csv' => 'CSV',
+                'json' => 'JSON',
+            ],
+            'required' => true,
         ]);
     }
 
