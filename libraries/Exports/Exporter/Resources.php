@@ -22,6 +22,10 @@ class Exports_Exporter_Resources implements Exports_Exporter_ExporterInterface
         $apiResources = Omeka_Controller_Plugin_Api::getApiResources();
         $resourceTypes = [];
         foreach ($apiResources as $apiResourceName => $apiResource) {
+            if (!isset($apiResource['record_type'])) {
+                // Only resources that have a record type can be exported.
+                continue;
+            }
             $resourceTypes[$apiResourceName] = $apiResourceName;
         }
         asort($resourceTypes);
@@ -52,6 +56,47 @@ class Exports_Exporter_Resources implements Exports_Exporter_ExporterInterface
 
     public function export(Job_ExportsExport $job)
     {
-        // @todo: Make the Items export
+        $export = $job->getExport();
+        $exportData = $export->getData();
+
+        $exportResource = $exportData['resource'] ?? null;
+        $exportFormat = $exportData['format'] ?? null;
+        parse_str($exportData['query'] ?? '', $exportQuery);
+
+        if (!isset($exportResource)) {
+            throw new Exception(sprintf('Exports plugin: Missing "resource" option for export "%s" using exporter "Resources".', $export->getLabel()));
+        }
+        if (!isset($exportFormat)) {
+            throw new Exception(sprintf('Exports plugin: Missing "format" option for export "%s" using exporter "Resources".', $export->getLabel()));
+        }
+
+        $apiResources = Omeka_Controller_Plugin_Api::getApiResources();
+
+        if (!isset($apiResources[$exportResource])) {
+            throw new Exception(sprintf('Exports plugin: Unknown API resource "%s" for export "%s" using exporter "Resources".', $exportResource, $export->getLabel()));
+        }
+
+        $apiResource = $apiResources[$exportResource];
+
+        if (!isset($apiResource['record_type'])) {
+            throw new Exception(sprintf('Exports plugin: Unsupported API resource "%s" for export "%s" using exporter "Resources".', $exportResource, $export->getLabel()));
+        }
+
+        $recordAdapterClass = sprintf('Api_%s', $apiResource['record_type']);
+        $recordAdapter = new $recordAdapterClass;
+        $recordsTable = get_db()->getTable($apiResource['record_type']);
+
+        $page = 1;
+        do {
+            $records = $recordsTable->findBy($exportQuery, 100, $page++);
+            foreach ($records as $record) {
+                $representation = $recordAdapter->getRepresentation($record);
+                $job->makeFile(sprintf('%s.json', $record->id), json_encode($representation, JSON_PRETTY_PRINT));
+            }
+        } while ($records);
+    }
+
+    public function getApiResources($resourceType = null)
+    {
     }
 }
