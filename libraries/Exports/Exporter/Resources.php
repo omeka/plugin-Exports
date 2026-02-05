@@ -76,16 +76,33 @@ class Exports_Exporter_Resources implements Exports_Exporter_ExporterInterface
         if (!isset($apiResource['record_type'])) {
             throw new Exception(sprintf('Exports: Unsupported API resource "%s" for export "%s" using exporter "Resources".', $exportData['resource'], $export->getLabel()));
         }
+        parse_str($exportData['query'] ?? [], $exportData['query']);
 
+        // Set the record table
+        $recordsTable = get_db()->getTable($apiResource['record_type']);
+
+        // Set the API record adapter.
         $recordAdapterClass = sprintf('Api_%s', $apiResource['record_type']);
         $recordAdapter = new $recordAdapterClass;
-        $recordsTable = get_db()->getTable($apiResource['record_type']);
 
         $page = 1;
         do {
             $records = $recordsTable->findBy($exportData['query'], 100, $page++);
             foreach ($records as $record) {
+                // Get the resource representation from the API
                 $representation = $recordAdapter->getRepresentation($record);
+
+                // Must manually add extended resources to the resource representation.
+                // @see ApiController::_getRepresentation()
+                $extended = [];
+                $extendedTemp = apply_filters(sprintf('api_extend_%s', $exportData['resource']), [], ['record' => $record]);
+                foreach ($extendedTemp as $resource => $content) {
+                    if (is_array($content) && (isset($content['count']) || isset($content['id'])) && array_key_exists('url', $content)) {
+                        $extended[$resource] = $content;
+                    }
+                }
+                $representation['extended_resources'] = $extended;
+
                 $job->makeFile(sprintf('%s.json', $record->id), json_encode($representation, JSON_PRETTY_PRINT));
             }
         } while ($records);
