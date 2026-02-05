@@ -83,7 +83,7 @@ class ExportsPlugin extends Omeka_Plugin_AbstractPlugin
 
     public function filterExportsExporters($exporters)
     {
-        $exporters['resources'] = new Exports_Exporter_Resources;
+        $exporters['records'] = new Exports_Exporter_Records;
         return $exporters;
     }
 
