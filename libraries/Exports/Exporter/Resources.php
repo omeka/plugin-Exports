@@ -59,27 +59,22 @@ class Exports_Exporter_Resources implements Exports_Exporter_ExporterInterface
         $export = $job->getExport();
         $exportData = $export->getData();
 
-        $exportResource = $exportData['resource'] ?? null;
-        $exportFormat = $exportData['format'] ?? null;
-        parse_str($exportData['query'] ?? '', $exportQuery);
-
-        if (!isset($exportResource)) {
-            throw new Exception(sprintf('Exports plugin: Missing "resource" option for export "%s" using exporter "Resources".', $export->getLabel()));
+        if (!isset($exportData['format'])) {
+            throw new Exception(sprintf('Exports: Missing "format" option for export "%s" using exporter "Resources".', $export->getLabel()));
         }
-        if (!isset($exportFormat)) {
-            throw new Exception(sprintf('Exports plugin: Missing "format" option for export "%s" using exporter "Resources".', $export->getLabel()));
+        if (!in_array($exportData['format'], ['csv', 'json'])) {
+            throw new Exception(sprintf('Exports: Invalid "format" option "%s" for export "%s" using exporter "Resources".', $exportData['format'], $export->getLabel()));
         }
-
+        if (!isset($exportData['resource'])) {
+            throw new Exception(sprintf('Exports: Missing "resource" option for export "%s" using exporter "Resources".', $export->getLabel()));
+        }
         $apiResources = Omeka_Controller_Plugin_Api::getApiResources();
-
-        if (!isset($apiResources[$exportResource])) {
-            throw new Exception(sprintf('Exports plugin: Unknown API resource "%s" for export "%s" using exporter "Resources".', $exportResource, $export->getLabel()));
+        if (!isset($apiResources[$exportData['resource']])) {
+            throw new Exception(sprintf('Exports: Unknown API resource "%s" for export "%s" using exporter "Resources".', $exportData['resource'], $export->getLabel()));
         }
-
-        $apiResource = $apiResources[$exportResource];
-
+        $apiResource = $apiResources[$exportData['resource']];
         if (!isset($apiResource['record_type'])) {
-            throw new Exception(sprintf('Exports plugin: Unsupported API resource "%s" for export "%s" using exporter "Resources".', $exportResource, $export->getLabel()));
+            throw new Exception(sprintf('Exports: Unsupported API resource "%s" for export "%s" using exporter "Resources".', $exportData['resource'], $export->getLabel()));
         }
 
         $recordAdapterClass = sprintf('Api_%s', $apiResource['record_type']);
@@ -88,15 +83,11 @@ class Exports_Exporter_Resources implements Exports_Exporter_ExporterInterface
 
         $page = 1;
         do {
-            $records = $recordsTable->findBy($exportQuery, 100, $page++);
+            $records = $recordsTable->findBy($exportData['query'], 100, $page++);
             foreach ($records as $record) {
                 $representation = $recordAdapter->getRepresentation($record);
                 $job->makeFile(sprintf('%s.json', $record->id), json_encode($representation, JSON_PRETTY_PRINT));
             }
         } while ($records);
-    }
-
-    public function getApiResources($resourceType = null)
-    {
     }
 }
