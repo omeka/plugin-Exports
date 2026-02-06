@@ -174,5 +174,43 @@ class Exports_Exporter_Records implements Exports_Exporter_ExporterInterface
             }
             return [['tags', implode($multivalueSeparator, $tags)]];
         }
+        if ('element_texts' === $k) {
+            $elementTexts = [];
+            foreach ($v as $elementText) {
+                $header = sprintf('%s:%s', $elementText['element_set']['name'], $elementText['element']['name']);
+                $elementTexts[$header][] = $elementText['text'];
+            }
+            $headerFieldPairs = [];
+            foreach ($elementTexts as $header => $texts) {
+                $headerFieldPairs[] = [$header, implode($multivalueSeparator, $texts)];
+            }
+            return $headerFieldPairs;
+        }
+        // @todo: Add filter that allows plugins to add columns.
+        if (is_array($v)) {
+            $headerFieldPairs = [];
+            foreach ($v as $subK => $subV) {
+                if (in_array($subK, ['url', 'resource'])) {
+                    continue;
+                }
+                $subValueString = $this->getValueString($subV);
+                if (null !== $subValueString) {
+                    $headerFieldPairs[] = [sprintf('%s_%s', $k, $subK), $subValueString];
+                }
+            }
+            return $headerFieldPairs;
+        }
+        $valueString = $this->getValueString($v);
+        if (null !== $valueString) {
+            return [[$k, $valueString]];
+        }
+    }
+
+    public function getValueString($v)
+    {
+        if (is_string($v) || is_bool($v) || is_int($v) || is_float($v)) {
+            return (string) $v;
+        }
+        return null;
     }
 }
