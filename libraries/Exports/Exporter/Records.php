@@ -90,8 +90,7 @@ class Exports_Exporter_Records implements Exports_Exporter_ExporterInterface
         // Delegate to the export format.
         switch ($exportData['format'] ?? null) {
             case 'csv':
-                $multivalueSeparator = $exportData['multivalue_separator'] ?? '|';
-                $this->exportCsv($job, $recordsTable, $recordAdapter, $recordQuery, $multivalueSeparator);
+                $this->exportCsv($job, $recordsTable, $recordAdapter, $recordQuery);
                 break;
             case 'json':
                 $this->exportJson($job, $recordsTable, $recordAdapter, $recordQuery);
@@ -101,7 +100,7 @@ class Exports_Exporter_Records implements Exports_Exporter_ExporterInterface
         }
     }
 
-    public function exportCsv($job, $recordsTable, $recordAdapter, $recordQuery, $multivalueSeparator)
+    public function exportCsv($job, $recordsTable, $recordAdapter, $recordQuery)
     {
         $export = $job->getExport();
 
@@ -118,7 +117,7 @@ class Exports_Exporter_Records implements Exports_Exporter_ExporterInterface
             foreach ($records as $record) {
                 $representation = $recordAdapter->getRepresentation($record);
                 foreach ($representation as $k => $v) {
-                    $fieldData = $this->getFieldData($k, $v, $multivalueSeparator);
+                    $fieldData = $this->getFieldData($k, $v, $export);
                     if (is_array($fieldData)) {
                         foreach ($fieldData as $data) {
                             $headerRow[$data[0]] = $data[0];
@@ -142,7 +141,7 @@ class Exports_Exporter_Records implements Exports_Exporter_ExporterInterface
                 $representation = $recordAdapter->getRepresentation($record);
                 $recordRow = $rowTemplate;
                 foreach ($representation as $k => $v) {
-                    $fieldData = $this->getFieldData($k, $v, $multivalueSeparator);
+                    $fieldData = $this->getFieldData($k, $v, $export);
                     if (is_array($fieldData)) {
                         foreach ($fieldData as $data) {
                             if (array_key_exists($data[0], $recordRow)) {
@@ -165,8 +164,12 @@ class Exports_Exporter_Records implements Exports_Exporter_ExporterInterface
      * Determines whether to process the key-value pair and returns an array of
      * corresponding CSV header-field pairs.
      */
-    public function getFieldData($k, $v, $multivalueSeparator)
+    public function getFieldData($k, $v, $export)
     {
+        $exportData = $export->getData();
+        $multivalueSeparator = $exportData['multivalue_separator'] ?? '|';
+
+        // First, handle specific fields by key.
         if ('tags' === $k) {
             $tags = [];
             foreach ($v as $tag) {
@@ -180,37 +183,54 @@ class Exports_Exporter_Records implements Exports_Exporter_ExporterInterface
                 $header = sprintf('%s:%s', $elementText['element_set']['name'], $elementText['element']['name']);
                 $elementTexts[$header][] = $elementText['text'];
             }
-            $headerFieldPairs = [];
+            $fieldData = [];
             foreach ($elementTexts as $header => $texts) {
-                $headerFieldPairs[] = [$header, implode($multivalueSeparator, $texts)];
+                $fieldData[] = [$header, implode($multivalueSeparator, $texts)];
             }
-            return $headerFieldPairs;
+            return $fieldData;
         }
-        // @todo: Add filter that allows plugins to add columns.
+
+        // Next, let plugins return CSV field data.
+        $fieldData = [];
+        $fieldData = apply_filters(
+            'exports_records_csv_get_field_data',
+            $fieldData, // Plugins set CSV header-field pairs to this array
+            [
+                'k' => $k, // The JSON-LD key
+                'v' => $v,  // The JSON-LD value
+                'export' => $export, // The export respresentation
+            ]
+        );
+        if ($fieldData) {
+            return $fieldData;
+        }
+
+        // Next, handle the remaining array and scalar fields.
+        $getValueString = function ($v) {
+            if (is_string($v) || is_bool($v) || is_int($v) || is_float($v)) {
+                return (string) $v;
+            }
+            return null;
+        };
         if (is_array($v)) {
-            $headerFieldPairs = [];
+            $fieldData = [];
             foreach ($v as $subK => $subV) {
                 if (in_array($subK, ['url', 'resource'])) {
                     continue;
                 }
-                $subValueString = $this->getValueString($subV);
+                $subValueString = $getValueString($subV);
                 if (null !== $subValueString) {
-                    $headerFieldPairs[] = [sprintf('%s_%s', $k, $subK), $subValueString];
+                    $fieldData[] = [sprintf('%s_%s', $k, $subK), $subValueString];
                 }
             }
-            return $headerFieldPairs;
+            return $fieldData;
         }
-        $valueString = $this->getValueString($v);
+        $valueString = $getValueString($v);
         if (null !== $valueString) {
             return [[$k, $valueString]];
         }
-    }
 
-    public function getValueString($v)
-    {
-        if (is_string($v) || is_bool($v) || is_int($v) || is_float($v)) {
-            return (string) $v;
-        }
+        // There's nothing to get.
         return null;
     }
 }
