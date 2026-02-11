@@ -9,6 +9,10 @@ class Job_ExportsExport extends Job_AbstractExports
         try {
             $this->setStatus(Process::STATUS_IN_PROGRESS);
 
+            if (!ExportsPlugin::canExport()) {
+                throw new Exception('Invalid working and/or storage directory.');
+            }
+
             // Make the export directory.
             $this->makeDirectory('');
 
@@ -17,7 +21,6 @@ class Job_ExportsExport extends Job_AbstractExports
 
             // Cancel the export if the export directory is empty.
             if (2 === count(scandir($this->getExportDirectoryPath()))) {
-                $this->deleteExportDirectory();
                 throw new Exception('Nothing found in export directory.');
             }
 
@@ -30,14 +33,23 @@ class Job_ExportsExport extends Job_AbstractExports
             );
             $this->execute($command);
 
-            // Delete leftover server artifacts.
-            $this->deleteExportDirectory();
+            // Copy the export ZIP file to Omeka storage.
+            $storage = Zend_Registry::get('storage');
+            $storage->store(
+                sprintf('%s/%s.zip', $this->getExportsDirectoryPath(), $this->getExportName()),
+                sprintf('exports/%s.zip', $this->getExportName())
+            );
 
             $this->setStatus(Process::STATUS_COMPLETED);
 
         } catch (Exception $e) {
             $this->setStatus(Process::STATUS_ERROR);
             _log($e->getMessage(), Zend_Log::ERR);
+
+        } finally {
+            // Always attempt to delete working directory artifacts.
+            $this->deleteExportDirectory();
+            $this->deleteExportZip();
         }
     }
 }

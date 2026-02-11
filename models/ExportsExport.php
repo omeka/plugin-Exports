@@ -97,6 +97,12 @@ class ExportsExport extends Omeka_Record_AbstractRecord implements Zend_Acl_Reso
         $this->data = json_encode($data);
     }
 
+    public function getUri()
+    {
+        $storage = Zend_Registry::get('storage');
+        return $storage->getUri(sprintf('exports/%s.zip', $this->getName()));
+    }
+
     protected function afterDelete()
     {
         if (!in_array($this->getStatus(), [Process::STATUS_COMPLETED, Process::STATUS_ERROR])) {

@@ -87,8 +87,32 @@ class ExportsPlugin extends Omeka_Plugin_AbstractPlugin
         return $exporters;
     }
 
-    public static function exportsDirectoryPathIsValid($exportsDirectoryPath)
+    public static function exportsDirectoryPathIsValid($path = null)
     {
-        return (is_dir($exportsDirectoryPath) && is_writable($exportsDirectoryPath));
+        $path = $path ?? get_option('exports_directory_path');
+        return (is_dir($path) && is_writable($path));
+    }
+
+    public static function exportsStorageIsValid()
+    {
+        $storage = Zend_Registry::get('storage');
+
+        // If using the filesystem storage adapter, the files/exports directory
+        // must exist and be writable.
+        if ($storage->getAdapter() instanceof Omeka_Storage_Adapter_Filesystem) {
+            $dir = sprintf('%s/exports', FILES_DIR);
+            if (!is_dir($dir)) {
+                mkdir($dir, 0755, true);
+            }
+            return is_writable($dir);
+        }
+
+        // Any other storage adapter should work.
+        return true;
+    }
+
+    public static function canExport()
+    {
+        return (self::exportsDirectoryPathIsValid() && self::exportsStorageIsValid());
     }
 }

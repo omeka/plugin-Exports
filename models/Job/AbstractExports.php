@@ -27,14 +27,11 @@ abstract class Job_AbstractExports extends Omeka_Job_AbstractJob
     /**
      * Delete the export directory from the server.
      */
-    public function deleteExportDirectory(): void
+    public function deleteExportDirectory()
     {
         $path = $this->getExportDirectoryPath();
         if (is_dir($path) && is_writable($path)) {
-            $command = sprintf(
-                'rm -r %s',
-                escapeshellarg($path)
-            );
+            $command = sprintf('rm -r %s', escapeshellarg($path));
             $this->execute($command);
         }
     }
@@ -60,9 +57,6 @@ abstract class Job_AbstractExports extends Omeka_Job_AbstractJob
     {
         if (null === $this->_exportsDirectoryPath) {
             $exportsDirectoryPath = get_option('exports_directory_path');
-            if (!ExportsPlugin::exportsDirectoryPathIsValid($exportsDirectoryPath)) {
-                throw new Exception('Invalid directory path');
-            }
             $this->_exportsDirectoryPath = $exportsDirectoryPath;
         }
         return $this->_exportsDirectoryPath;
