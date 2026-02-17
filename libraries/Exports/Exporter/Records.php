@@ -78,7 +78,8 @@ class Exports_Exporter_Records implements Exports_Exporter_ExporterInterface
         }
 
         // Set the record query.
-        parse_str($exportData['query'] ?? [], $recordQuery);
+        $query = $exportData['query'] ?? '';
+        parse_str(ltrim($query, '?'), $recordQuery);
 
         // Set the record table
         $recordsTable = get_db()->getTable($apiResource['record_type']);
