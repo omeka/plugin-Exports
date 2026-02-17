@@ -68,7 +68,7 @@ class ExportsPlugin extends Omeka_Plugin_AbstractPlugin
     public function hookDefineAcl($args)
     {
         $acl = $args['acl'];
-        $acl->addResource('Exports_Exports');
+        $acl->addResource('Exports_Index');
     }
 
     public function filterAdminNavigationMain($nav)
@@ -76,7 +76,7 @@ class ExportsPlugin extends Omeka_Plugin_AbstractPlugin
         $nav[] = [
             'label' => __('Exports'),
             'uri' => url('exports'),
-            'resource' => ('Exports_Exports'),
+            'resource' => ('Exports_Index'),
         ];
         return $nav;
     }
