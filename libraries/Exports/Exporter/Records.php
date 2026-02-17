@@ -54,7 +54,7 @@ class Exports_Exporter_Records implements Exports_Exporter_ExporterInterface
         ]);
         $form->addElement('text', 'multivalue_separator', [
             'label' => __('Multivalue Separator'),
-            'description' => __('Enter the character to separate multiple values in a cell'),
+            'description' => __('Enter the character to separate multiple values in a cell. This only applies to the CSV format.'),
             'value' => '|',
             'required' => true,
         ]);
