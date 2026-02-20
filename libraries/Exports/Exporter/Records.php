@@ -40,7 +40,7 @@ class Exports_Exporter_Records implements Exports_Exporter_ExporterInterface
         ]);
         $form->addElement('text', 'query', [
             'label' => __('Search Query'),
-            'description' => __('Enter the query used to filter the records to be exported. If no query is entered, all available records will be exported.'),
+            'description' => __('Enter the query used to filter the records to be exported. If no query is entered, all available records will be exported. For many records, the search query is the URL query string of a record browse page.'),
         ]);
         $form->addElement('select', 'format', [
             'label' => __('Format'),

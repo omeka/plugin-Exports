@@ -21,7 +21,7 @@ echo flash();
     <h2><?php echo __('Name'); ?></h2>
     <p><?php echo $export->getName(); ?></p>
     <h2><?php echo __('Data'); ?></h2>
-    <pre style="font-size: 12px;"><?php echo json_encode($export->getData(), JSON_PRETTY_PRINT); ?></pre>
+    <pre style="font-size: 12px; overflow: auto; background-color: #F5F5F5; padding: 10px;"><?php echo json_encode($export->getData(), JSON_PRETTY_PRINT); ?></pre>
 </section>
 
 <section class="three columns omega">
