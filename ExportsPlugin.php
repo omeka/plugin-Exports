@@ -59,10 +59,13 @@ class ExportsPlugin extends Omeka_Plugin_AbstractPlugin
 
     public function hookConfig($args)
     {
-        if (!self::exportsDirectoryPathIsValid($_POST['exports_directory_path'])) {
+        // Enforce an absolute path to avoid potential relative path mismatches
+        // between admin and job contexts.
+        $path = realpath($_POST['exports_directory_path']);
+        if (!self::exportsDirectoryPathIsValid($path)) {
             throw new Omeka_Plugin_Installer_Exception('Invalid exports directory path. The path must be a directory and must be writable by the web server.');
         }
-        set_option('exports_directory_path', $_POST['exports_directory_path']);
+        set_option('exports_directory_path', $path);
     }
 
     public function hookDefineAcl($args)
