@@ -90,7 +90,7 @@ class Exports_IndexController extends Omeka_Controller_AbstractActionController
 
             } else {
                 $export->delete();
-                $this->_helper->flashMessenger($e);
+                $this->_helper->flashMessenger($export->getErrors());
             }
         }
     }
