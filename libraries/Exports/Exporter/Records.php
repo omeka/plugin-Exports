@@ -320,26 +320,24 @@ class Exports_Exporter_Records implements Exports_Exporter_ExporterInterface
     {
         $export = $job->getExport();
 
-        $totalCount = $recordsTable->count($recordQuery);
-
         $fp = fopen(sprintf('%s/%s.json', $job->getExportDirectoryPath(), $export->getName()), 'w');
         fwrite($fp, '[');
 
         $page = 1;
-        $count = 0;
+        $isFirst = true;
         do {
             $records = $recordsTable->findBy($recordQuery, 100, $page++);
             foreach ($records as $record) {
-                $count++;
                 $representation = $this->getRepresentation($job, $recordAdapter, $record);
                 $recordJson = json_encode($representation);
-                if ($count === $totalCount) {
-                    // The JSON specification does not allow trailing commas
-                    // within arrays. Don't include it on the last resource.
-                    fwrite($fp, $recordJson);
-                } else {
-                    fwrite($fp, sprintf('%s,', $recordJson));
+                // The JSON specification does not allow trailing commas within
+                // arrays. Put the comma before every resource but the first,
+                // since the last one can't be known in advance.
+                if (!$isFirst) {
+                    fwrite($fp, ',');
                 }
+                fwrite($fp, $recordJson);
+                $isFirst = false;
             }
         } while ($records);
 
