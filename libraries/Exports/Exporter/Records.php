@@ -126,7 +126,7 @@ class Exports_Exporter_Records implements Exports_Exporter_ExporterInterface
             foreach ($records as $record) {
                 $representation = $recordAdapter->getRepresentation($record);
                 foreach ($representation as $k => $v) {
-                    $fieldData = $this->getFieldData($k, $v, $export);
+                    $fieldData = $this->getFieldData($k, $v, $export, $record);
                     if (is_array($fieldData)) {
                         foreach ($fieldData as $data) {
                             $headerRow[$data[0]] = $data[0];
@@ -156,7 +156,7 @@ class Exports_Exporter_Records implements Exports_Exporter_ExporterInterface
                 $representation = $recordAdapter->getRepresentation($record);
                 $recordRow = $rowTemplate;
                 foreach ($representation as $k => $v) {
-                    $fieldData = $this->getFieldData($k, $v, $export);
+                    $fieldData = $this->getFieldData($k, $v, $export, $record);
                     if (is_array($fieldData)) {
                         foreach ($fieldData as $data) {
                             if (array_key_exists($data[0], $recordRow)) {
@@ -179,7 +179,7 @@ class Exports_Exporter_Records implements Exports_Exporter_ExporterInterface
      * Determines whether to process the key-value pair and returns an array of
      * corresponding CSV header-field pairs.
      */
-    public function getFieldData($k, $v, $export)
+    public function getFieldData($k, $v, $export, $record)
     {
         $exportData = $export->getData();
         $multivalueSeparator = $exportData['multivalue_separator'] ?? '|';
@@ -206,6 +206,19 @@ class Exports_Exporter_Records implements Exports_Exporter_ExporterInterface
         }
         if ('metadata' === $k) {
             return [['metadata', json_encode($v)]];
+        }
+        if ('files' === $k && $record instanceof Item) {
+            // Add the original URLs of the item's files.
+            $fileUrls = [];
+            if ($v['count']) {
+                foreach ($record->getFiles() as $file) {
+                    $fileUrls[] = $file->getWebPath();
+                }
+            }
+            return [
+                ['files_count', (string) $v['count']],
+                ['file_urls', implode($multivalueSeparator, $fileUrls)],
+            ];
         }
 
         // Next, let plugins return CSV field data.
