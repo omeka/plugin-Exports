@@ -13,6 +13,8 @@ class Job_ExportsExport extends Job_AbstractExports
                 throw new Exception('Invalid working and/or storage directory.');
             }
 
+            $this->setStorageWebDir();
+
             // Make the export directory.
             $this->makeDirectory('');
 

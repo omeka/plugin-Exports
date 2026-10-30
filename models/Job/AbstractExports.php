@@ -102,6 +102,34 @@ abstract class Job_AbstractExports extends Omeka_Job_AbstractJob
     }
 
     /**
+     * Get the web root of the site.
+     *
+     * Background processes run from the command line, where Omeka can't detect
+     * the web root, so WEB_ROOT is wrong there. Use the web root passed by the
+     * request that dispatched the job.
+     */
+    public function getWebRoot()
+    {
+        return $this->_options['web_root'] ?? WEB_ROOT;
+    }
+
+    /**
+     * Set the web URL of local file storage.
+     *
+     * Unless configured, local file storage derives its web URL from WEB_ROOT,
+     * which is wrong in background processes.
+     */
+    public function setStorageWebDir()
+    {
+        $storageAdapter = Zend_Registry::get('storage')->getAdapter();
+        if ($storageAdapter instanceof Omeka_Storage_Adapter_Filesystem
+            && WEB_FILES === $storageAdapter->getOptions()['webDir']
+        ) {
+            $storageAdapter->setWebDir(sprintf('%s/files', $this->getWebRoot()));
+        }
+    }
+
+    /**
      * Set the status of the export process.
      */
     public function setStatus($status)

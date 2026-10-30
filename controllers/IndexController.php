@@ -78,7 +78,11 @@ class Exports_IndexController extends Omeka_Controller_AbstractActionController
                 $dispatcher = Zend_Registry::get('job_dispatcher');
                 $dispatcher->sendLongRunning(
                     'Job_ExportsExport',
-                    ['export_id' => $export->id]
+                    [
+                        'export_id' => $export->id,
+                        // Background processes can't detect the web root.
+                        'web_root' => WEB_ROOT,
+                    ]
                 );
 
                 $this->_helper->flashMessenger(__('Exporting "%s".', $export->getLabel()), 'success');

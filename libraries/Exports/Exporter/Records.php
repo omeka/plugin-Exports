@@ -102,6 +102,49 @@ class Exports_Exporter_Records implements Exports_Exporter_ExporterInterface
     }
 
     /**
+     * Get the API representation of a record.
+     *
+     * @param Job_ExportsExport $job
+     * @param Omeka_Record_Api_RecordAdapterInterface $recordAdapter
+     * @param Omeka_Record_AbstractRecord $record
+     * @return array
+     */
+    public function getRepresentation($job, $recordAdapter, $record)
+    {
+        $representation = $recordAdapter->getRepresentation($record);
+        return $this->replaceWebRoot($representation, $job->getWebRoot());
+    }
+
+    /**
+     * Replace the wrong web root at the start of URLs, wherever they are in a
+     * representation.
+     *
+     * Background processes build URLs with the wrong web root. Correct them
+     * until Omeka fixes this in core. For example:
+     *   http:///var/www/omeka/application/scripts/api/items/1
+     *   becomes http://example.com/omeka/api/items/1
+     *
+     * @param mixed $value
+     * @param string $webRoot
+     * @return mixed
+     */
+    public function replaceWebRoot($value, $webRoot)
+    {
+        // URLs can be nested at any depth, so look inside arrays.
+        if (is_array($value)) {
+            foreach ($value as $k => $v) {
+                $value[$k] = $this->replaceWebRoot($v, $webRoot);
+            }
+            return $value;
+        }
+        $wrongWebRoot = WEB_ROOT;
+        if (is_string($value) && 0 === strpos($value, $wrongWebRoot)) {
+            return substr_replace($value, $webRoot, 0, strlen($wrongWebRoot));
+        }
+        return $value;
+    }
+
+    /**
      * Export to CSV.
      *
      * @param Job_ExportsExport $job
@@ -124,7 +167,7 @@ class Exports_Exporter_Records implements Exports_Exporter_ExporterInterface
         do {
             $records = $recordsTable->findBy($recordQuery, 100, $page++);
             foreach ($records as $record) {
-                $representation = $recordAdapter->getRepresentation($record);
+                $representation = $this->getRepresentation($job, $recordAdapter, $record);
                 foreach ($representation as $k => $v) {
                     $fieldData = $this->getFieldData($k, $v, $export, $record);
                     if (is_array($fieldData)) {
@@ -153,7 +196,7 @@ class Exports_Exporter_Records implements Exports_Exporter_ExporterInterface
         do {
             $records = $recordsTable->findBy($recordQuery, 100, $page++);
             foreach ($records as $record) {
-                $representation = $recordAdapter->getRepresentation($record);
+                $representation = $this->getRepresentation($job, $recordAdapter, $record);
                 $recordRow = $rowTemplate;
                 foreach ($representation as $k => $v) {
                     $fieldData = $this->getFieldData($k, $v, $export, $record);
@@ -288,7 +331,7 @@ class Exports_Exporter_Records implements Exports_Exporter_ExporterInterface
             $records = $recordsTable->findBy($recordQuery, 100, $page++);
             foreach ($records as $record) {
                 $count++;
-                $representation = $recordAdapter->getRepresentation($record);
+                $representation = $this->getRepresentation($job, $recordAdapter, $record);
                 $recordJson = json_encode($representation);
                 if ($count === $totalCount) {
                     // The JSON specification does not allow trailing commas
