@@ -46,7 +46,7 @@ class Job_ExportsExport extends Job_AbstractExports
 
         } catch (Exception $e) {
             $this->setStatus(Process::STATUS_ERROR);
-            _log($e->getMessage(), Zend_Log::ERR);
+            _log($e, Zend_Log::ERR);
 
         } finally {
             // Always attempt to delete working directory artifacts.
