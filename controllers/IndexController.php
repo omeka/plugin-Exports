@@ -74,14 +74,22 @@ class Exports_IndexController extends Omeka_Controller_AbstractActionController
 
             if ($export->save(false)) {
 
+                // Background processes can't detect the web root, so pass it
+                // to the job. If the Server URL setting is set, take the
+                // scheme and host from core's serverUrl() helper, which applies
+                // that setting; otherwise keep WEB_ROOT.
+                $webRoot = WEB_ROOT;
+                if (get_option('server_url')) {
+                    $webRoot = $this->view->serverUrl(parse_url(WEB_ROOT, PHP_URL_PATH));
+                }
+
                 // Dispatch the export job.
                 $dispatcher = Zend_Registry::get('job_dispatcher');
                 $dispatcher->sendLongRunning(
                     'Job_ExportsExport',
                     [
                         'export_id' => $export->id,
-                        // Background processes can't detect the web root.
-                        'web_root' => WEB_ROOT,
+                        'web_root' => $webRoot,
                     ]
                 );
 
