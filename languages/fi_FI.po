@@ -1,0 +1,178 @@
+# Translation for the Exports plugin for Omeka.
+# Copyright (C) 2026 Digital Scholar
+# This file is distributed under the same license as the Omeka package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+# Translators:
+# Matti Lassila <matti.lassila@gmail.com>, 2026
+# 
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Exports\n"
+"Report-Msgid-Bugs-To: http://github.com/omeka/plugin-ActivityLog/issues\n"
+"POT-Creation-Date: 2012-01-09 21:49-0500\n"
+"PO-Revision-Date: 2026-03-16 19:30+0000\n"
+"Last-Translator: Matti Lassila <matti.lassila@gmail.com>, 2026\n"
+"Language-Team: Finnish (Finland) (https://app.transifex.com/omeka/teams/14184/fi_FI/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: fi_FI\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: ExportsPlugin.php:80
+msgid "Exports"
+msgstr "Tietuevienti"
+
+#: controllers/IndexController.php:31
+msgid "Configure your export below."
+msgstr "Konfiguroi tietojen vienti."
+
+#: controllers/IndexController.php:88
+#, php-format
+msgid "Exporting \"%s\"."
+msgstr "Viedään \"%s\"."
+
+#: libraries/Exports/Exporter/Records.php:11
+msgid "Records"
+msgstr "tietuetta"
+
+#: libraries/Exports/Exporter/Records.php:16
+msgid "Export a file containing data about selected records."
+msgstr "Vie tiedosto joka sisältää valittujen tietueiden tiedot."
+
+#: libraries/Exports/Exporter/Records.php:37
+msgid "Select the type of record to export."
+msgstr "Valitse vientitiedoston tyyppi."
+
+#: libraries/Exports/Exporter/Records.php:42
+msgid "Search Query"
+msgstr "Hakulause"
+
+#: libraries/Exports/Exporter/Records.php:43
+msgid ""
+"Enter the query used to filter the records to be exported. If no query is "
+"entered, all available records will be exported. For many records, the "
+"search query is the URL query string of a record browse page."
+msgstr ""
+"Anna hakulause jolla haetaan vietävät tietueet.  Ilman hakulausetta viedään "
+"kaikki tietueet. Hakulauseen voi usein kopioida tietuelistaus-sivun "
+"osoitteesta."
+
+#: libraries/Exports/Exporter/Records.php:47
+msgid "Select the format of the export file."
+msgstr "Valitse vientitiedoston muoto."
+
+#: libraries/Exports/Exporter/Records.php:56
+msgid "Multivalue Separator"
+msgstr "Arvojen erotin"
+
+#: libraries/Exports/Exporter/Records.php:57
+msgid ""
+"Enter the character to separate multiple values in a cell. This only applies"
+" to the CSV format."
+msgstr "Anna merkki jolla erotetaan CSV-sarakkeeseen tulevat toistuvat arvot."
+
+#: libraries/Exports/Exporter/Unknown.php:18
+#, php-format
+msgid "Unknown [%s]"
+msgstr "Tuntematon [%s]"
+
+#: libraries/Exports/Form/Export.php:15 views/admin/index/browse.php:8
+#: views/admin/index/show.php:13
+msgid "Exporter"
+msgstr "Tietuevienti"
+
+#: views/admin/exports-config-form.php:4
+#, php-format
+msgid ""
+"Invalid storage directory. This is the directory where exports will be "
+"stored and available for download. You will not be able to create exports "
+"until the \"%s\" directory exists and is writable by the web server."
+msgstr ""
+"Virheellinen työhakemisto. Hakemistoa käytetään vientitiedostojen "
+"tallentamiseen lataamista varten. Tiedostojen vientiä ei voida tehdä ennen "
+"kuin  \"%s\" hakemisto on olemassa ja web-palvelimella on hakemistoon "
+"kirjoitusoikeus."
+
+#: views/admin/exports-config-form.php:10
+msgid "Working directory"
+msgstr "Työhakemisto"
+
+#: views/admin/exports-config-form.php:13
+msgid ""
+"Enter the path to the directory where your exports will be built. The "
+"directory must exist and be writable by the web server."
+msgstr ""
+"Anna hakemistopolku jota käytetään viennin työhakemistona. Hakemiston tulee "
+"olla olemassa ja web-palvelimella on oltava hakemistoon kirjoitusoikeus."
+
+#: views/admin/index/browse.php:3 views/admin/index/show.php:12
+msgid "Browse Exports"
+msgstr "Selaa tietuevientejä"
+
+#: views/admin/index/browse.php:9 views/admin/index/show.php:15
+msgid "Status"
+msgstr "Tila"
+
+#: views/admin/index/browse.php:10
+msgid "Owner"
+msgstr "Omistaja"
+
+#: views/admin/index/browse.php:11
+msgid "Created"
+msgstr "Luotu"
+
+#: views/admin/index/browse.php:15
+msgid "Top pagination"
+msgstr ""
+
+#: views/admin/index/browse.php:18
+msgid "Create an Export"
+msgstr "Tee vienti"
+
+#: views/admin/index/browse.php:39 views/admin/index/show.php:16
+msgid "unknown"
+msgstr "tuntematon"
+
+#: views/admin/index/browse.php:50
+msgid "No exports found."
+msgstr "Ei tietuevientejä"
+
+#: views/admin/index/browse.php:54
+msgid "Bottom pagination"
+msgstr ""
+
+#: views/admin/index/export.php:3 views/admin/index/set-exporter.php:2
+msgid "Create Export"
+msgstr "Luo vienti"
+
+#: views/admin/index/export.php:18
+msgid "Begin Export"
+msgstr "Aloita vienti"
+
+#: views/admin/index/set-exporter.php:7
+msgid "What would you like to export?"
+msgstr "Valitse vietävät tietueet"
+
+#: views/admin/index/set-exporter.php:22
+msgid "Next"
+msgstr "Seuraava"
+
+#: views/admin/index/show.php:5
+#, php-format
+msgid "Export: \"%s\""
+msgstr "Vie: \"%s\""
+
+#: views/admin/index/show.php:18
+msgid "Download"
+msgstr "Lataa"
+
+#: views/admin/index/show.php:23
+msgid "Data"
+msgstr "Data"
+
+#: views/admin/index/show.php:29
+msgid "Re-export"
+msgstr "Vie uudelleen"

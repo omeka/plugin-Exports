@@ -25,7 +25,7 @@ msgstr ""
 msgid "Configure your export below."
 msgstr ""
 
-#: controllers/IndexController.php:84
+#: controllers/IndexController.php:88
 #, php-format
 msgid "Exporting \"%s\"."
 msgstr ""
@@ -111,6 +111,10 @@ msgstr ""
 msgid "Created"
 msgstr ""
 
+#: views/admin/index/browse.php:15
+msgid "Top pagination"
+msgstr ""
+
 #: views/admin/index/browse.php:18
 msgid "Create an Export"
 msgstr ""
@@ -121,6 +125,10 @@ msgstr ""
 
 #: views/admin/index/browse.php:50
 msgid "No exports found."
+msgstr ""
+
+#: views/admin/index/browse.php:54
+msgid "Bottom pagination"
 msgstr ""
 
 #: views/admin/index/export.php:3 views/admin/index/set-exporter.php:2
